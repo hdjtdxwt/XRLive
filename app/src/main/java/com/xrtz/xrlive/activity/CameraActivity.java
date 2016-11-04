@@ -41,6 +41,7 @@ import com.ksyun.media.streamer.kit.OnPreviewFrameListener;
 import com.ksyun.media.streamer.kit.StreamerConstants;
 import com.ksyun.media.streamer.logstats.StatsLogReport;
 import com.ksyun.media.streamer.util.audio.KSYBgmPlayer;
+import com.xrtz.xrlive.BuildConfig;
 import com.xrtz.xrlive.R;
 
 import java.util.LinkedList;
@@ -500,23 +501,42 @@ public class CameraActivity extends Activity implements
     }
 
     private void onBackoffClick() {
-        new AlertDialog.Builder(CameraActivity.this).setCancelable(true)
-                .setTitle("结束直播?")
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+        if(Build.VERSION.SDK_INT <= 22){//5.1以下的版本
+            new AlertDialog.Builder(CameraActivity.this).setCancelable(true)
+                    .setTitle("结束直播?")
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
 
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
+                        }
+                    })
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            //mChronometer.stop();
+                            mRecording = false;
+                            CameraActivity.this.finish();
+                        }
+                    }).show();
+        }else{//大于等于6.0的版本
+            android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+            builder.setTitle("结束直播?")
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
 
-                    }
-                })
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        //mChronometer.stop();
-                        mRecording = false;
-                        CameraActivity.this.finish();
-                    }
-                }).show();
+                        }
+                    })
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            //mChronometer.stop();
+                            mRecording = false;
+                            CameraActivity.this.finish();
+                        }
+                    }).show();
+        }
+
     }
 
     //是否开始直播，还是要暂停直播

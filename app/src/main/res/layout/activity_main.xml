@@ -28,7 +28,7 @@
         <ImageView
             android:id="@+id/image_tab_show"
             android:layout_width="0dip"
-            android:layout_height="80dp"
+            android:layout_height="50dp"
             android:layout_gravity="bottom"
             android:layout_weight="1.0"
             android:scaleType="center"
