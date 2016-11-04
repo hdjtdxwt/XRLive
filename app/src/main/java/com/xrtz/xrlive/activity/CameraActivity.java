@@ -192,10 +192,18 @@ public class CameraActivity extends Activity implements
         mStreamer.enableDebugLog(true);
         mStreamer.setFrontCameraMirror(true);//前置镜像是否选中
         mStreamer.setMuteAudio(false);//是否值采集声音
-        mStreamer.setEnableAudioPreview(true);//是否要推音频数据
+        mStreamer.setEnableAudioPreview(false);//是否要推音频数据
         mStreamer.setOnInfoListener(mOnInfoListener);
         mStreamer.setOnErrorListener(mOnErrorListener);
         mStreamer.setOnLogEventListener(mOnLogEventListener);
+        mStreamer.getAudioFilterMgt().setFilter((AudioFilterBase) null);
+
+        /*List<AudioFilterBase> filters = new LinkedList<>();
+        AudioReverbFilter reverbFilter = new AudioReverbFilter();
+        DemoAudioFilter demofilter = new DemoAudioFilter();
+        filters.add(reverbFilter);
+        filters.add(demofilter);
+        mStreamer.getAudioFilterMgt().setFilter(filters);*/
 
         mStreamer.getImgTexFilterMgt().setFilter(mStreamer.getGLRender(),
                 ImgTexFilterMgt.KSY_FILTER_BEAUTY_DENOISE);
