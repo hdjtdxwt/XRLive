@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.xrtz.xrlive.R;
 import com.xrtz.xrlive.bean.HotLiveBean;
+import com.xrtz.xrlive.bean.User;
 import com.xrtz.xrlive.view.CircleImageView;
 
 import java.util.List;
@@ -18,9 +19,9 @@ import java.util.List;
  */
 
 public class HotAdapter extends RecyclerView.Adapter<HotAdapter.HotHolder> {
-    List<HotLiveBean> list;
-
-    public HotAdapter(List<HotLiveBean> list) {
+    //List<HotLiveBean> list;
+    List<User> list;
+    public HotAdapter(List<User> list) {
         this.list = list;
     }
 
@@ -31,12 +32,12 @@ public class HotAdapter extends RecyclerView.Adapter<HotAdapter.HotHolder> {
 
     @Override
     public void onBindViewHolder(HotHolder holder, int position) {
-        HotLiveBean bean = list.get(position);
-        holder.nameTv.setText(bean.getName());
-        holder.addressTv.setText(bean.getAddress());
-        holder.lookingNumTv.setText(bean.getLookingNum());
-        holder.bigImage.setImageResource(bean.getResId());
-        holder.icon.setImageResource(bean.getResId());
+        User bean = list.get(position);
+        holder.nameTv.setText(bean.getUserName());
+        holder.addressTv.setText(bean.getUserNicheng());
+        holder.lookingNumTv.setText("1000");
+        holder.bigImage.setImageResource(R.mipmap.test1);
+        holder.icon.setImageResource(R.mipmap.test1);
     }
 
     @Override

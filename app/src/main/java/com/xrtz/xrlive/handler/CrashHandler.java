@@ -9,6 +9,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.xrtz.xrlive.util.FileUtils;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -62,6 +64,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * @param context
      */
     public void init(Context context) {
+        crashFilePath = new File(Environment.getExternalStorageDirectory(),"crash").toString();
         mContext = context.getApplicationContext();
         //获取系统默认的UncaughtException处理器
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -150,6 +153,41 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         Log.e("saveCrashInfo2File","--"+sb.toString());
 
         //使用网络请求框架，将infos和sb发送到服务器后台
+        //构造文件名
+        long timestamp = System.currentTimeMillis();
+        String time = formatter.format(new Date());
+        String fileName = "crash-" + time  + ".log";
+
+        //写文件和限制数量
+        FileUtils.writeFile2SDCard(crashFilePath, fileName, sb.toString());
+        cleanLogFileToN(crashFilePath);
+        return 1;
+    }
+
+    Comparator<File> newfileFinder = new Comparator<File>() {
+
+        @Override
+        public int compare(File x, File y) {
+// TODO Auto-generated method stub
+            if (x.lastModified() > y.lastModified()) return 1;
+            if (x.lastModified() < y.lastModified()) return -1;
+            else return 0;
+        }
+
+    };
+
+    private int cleanLogFileToN(String dirname) {
+        File dir = new File(dirname);
+        if (dir.isDirectory()) {
+            File[] logFiles = dir.listFiles();
+            if (logFiles.length > LogFileLimit) {
+                Arrays.sort(logFiles, newfileFinder);  //从小到大排
+//删掉N个以前的
+                for (int i = 0; i < logFiles.length - LogFileLimit; i++) {
+                    logFiles[i].delete();
+                }
+            }
+        }
 
         return 1;
     }

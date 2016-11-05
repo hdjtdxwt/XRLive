@@ -1,6 +1,7 @@
 package com.xrtz.xrlive.iservice;
 
 import com.xrtz.xrlive.response.StrResponse;
+import com.xrtz.xrlive.response.UserListResponse;
 import com.xrtz.xrlive.response.UserResponse;
 
 import retrofit.http.POST;
@@ -20,5 +21,9 @@ public interface UserService {
 
     //注册用户
     @POST("AddUserServlet")
-    Observable<StrResponse> reg(@Query("userName")String userName, @Query("userPassword") String userPassword, @Query("userEmail") String userEmail,@Query("userNicheng") String userNicheng);
+    Observable<UserResponse> reg(@Query("userName")String userName, @Query("userPassword") String userPassword, @Query("userEmail") String userEmail,@Query("userNicheng") String userNicheng);
+
+    @POST("ShowUserServlet")
+    Observable<UserListResponse> queryAllUser();
+
 }

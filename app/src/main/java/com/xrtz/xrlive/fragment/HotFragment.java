@@ -15,11 +15,22 @@ import com.xrtz.xrlive.R;
 import com.xrtz.xrlive.activity.SurfacePlayerVideoActivity;
 import com.xrtz.xrlive.adapter.HotAdapter;
 import com.xrtz.xrlive.bean.HotLiveBean;
+import com.xrtz.xrlive.bean.User;
+import com.xrtz.xrlive.common.CommonValues;
+import com.xrtz.xrlive.iservice.UserService;
 import com.xrtz.xrlive.listener.RecyclerViewClickListener;
+import com.xrtz.xrlive.response.UserListResponse;
 import com.xrtz.xrlive.view.RecycleViewDivider;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit.GsonConverterFactory;
+import retrofit.Retrofit;
+import retrofit.RxJavaCallAdapterFactory;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * HomeFragment里显示的 热门 的子界面
@@ -33,6 +44,8 @@ public class HotFragment extends Fragment {
 
     RecyclerView recyclerView;
     HotAdapter hotAdapter;
+    List<User> list = new ArrayList<>();
+    //List<HotLiveBean> list = new ArrayList<>();
     public HotFragment() {
 
     }
@@ -59,11 +72,11 @@ public class HotFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hot, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleView);
-        List<HotLiveBean> list = new ArrayList<>();
-        list.add(new HotLiveBean("小小丸子","大连市","20002",R.mipmap.test1));
+
+        /*list.add(new HotLiveBean("小小丸子","大连市","20002",R.mipmap.test1));
         list.add(new HotLiveBean("幕依","北京市","17453",R.mipmap.test2));
         list.add(new HotLiveBean("杨木木","太原市","11153",R.mipmap.test3));
-        list.add(new HotLiveBean("自测","深圳市","31153",R.mipmap.test5));
+        list.add(new HotLiveBean("自测","深圳市","31153",R.mipmap.test5));*/
         hotAdapter = new HotAdapter(list);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(container.getContext().getApplicationContext(),LinearLayoutManager.VERTICAL,false));
@@ -91,6 +104,23 @@ public class HotFragment extends Fragment {
             }
         }));
 
+        //开始提交数据
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(CommonValues.BaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create()).build();
+        //{"status":1,"data":{"userNicheng":"abcabc","userId":13,"userPassword":"123456","userName":"abcabc","userEmail":"abcabc@126.com"},"msg":"注册成功！"}
+        UserService userService = retrofit.create(UserService.class);
+        userService.queryAllUser().subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<UserListResponse>() {
+            @Override
+            public void call(UserListResponse userListResponse) {
+                if(userListResponse!=null &&userListResponse.getStatus()==1){
+                    List<User> userList = userListResponse.getData();
+                    list.clear();
+                    list.addAll(userList);
+                    hotAdapter.notifyDataSetChanged();
+                }
+            }
+        });
         return view;
     }
 
