@@ -1,25 +1,26 @@
 package com.xrtz.xrlive.fragment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.xrtz.xrlive.R;
 import com.xrtz.xrlive.activity.SurfacePlayerVideoActivity;
 import com.xrtz.xrlive.adapter.HotAdapter;
-import com.xrtz.xrlive.bean.HotLiveBean;
 import com.xrtz.xrlive.bean.User;
 import com.xrtz.xrlive.common.CommonValues;
 import com.xrtz.xrlive.iservice.UserService;
 import com.xrtz.xrlive.listener.RecyclerViewClickListener;
 import com.xrtz.xrlive.response.UserListResponse;
+import com.xrtz.xrlive.view.EmptyRecyclerView;
 import com.xrtz.xrlive.view.RecycleViewDivider;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class HotFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    RecyclerView recyclerView;
+    EmptyRecyclerView recyclerView;
     HotAdapter hotAdapter;
     List<User> list = new ArrayList<>();
     //List<HotLiveBean> list = new ArrayList<>();
@@ -71,17 +72,15 @@ public class HotFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hot, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycleView);
+        recyclerView = (EmptyRecyclerView) view.findViewById(R.id.recycleView);
 
-        /*list.add(new HotLiveBean("小小丸子","大连市","20002",R.mipmap.test1));
-        list.add(new HotLiveBean("幕依","北京市","17453",R.mipmap.test2));
-        list.add(new HotLiveBean("杨木木","太原市","11153",R.mipmap.test3));
-        list.add(new HotLiveBean("自测","深圳市","31153",R.mipmap.test5));*/
         hotAdapter = new HotAdapter(list);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(container.getContext().getApplicationContext(),LinearLayoutManager.VERTICAL,false));
         recyclerView.addItemDecoration(new RecycleViewDivider(container.getContext().getApplicationContext(), LinearLayoutManager.VERTICAL, 5, R.drawable.divider_mileage));
         recyclerView.setAdapter(hotAdapter);
+
+        View emptyView = view.findViewById(R.id.hot_empty);
+        recyclerView.setEmptyView(emptyView);//设置空的View
 
         //调用RecyclerView#addOnItemTouchListener方法能添加一个RecyclerView.OnItemTouchListener对象
         recyclerView.addOnItemTouchListener(new RecyclerViewClickListener(container.getContext().getApplicationContext(),new RecyclerViewClickListener.OnItemClickListener() {
@@ -89,13 +88,10 @@ public class HotFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getContext(), SurfacePlayerVideoActivity.class);
                 //intent.putExtra("path","rtmp://211.149.239.170:1935/live/");//默认的测试的看视频的地址
-                if(position>0) {
-                    intent.putExtra("path", "rtmp://live.hkstv.hk.lxdns.com/live/hks");
-                }else{
-                    intent.putExtra("path","rtmp://211.149.239.170:1935/live/");
-                }
+
+                intent.putExtra("path","rtmp://211.149.239.170:1935/live/"+list.get(position).getUserId());
+
                 startActivity(intent);
-                //Toast.makeText(MainActivity.this,"Click "+mData.get(position),Toast.LENGTH_SHORT).show();
             }
 
             @Override
