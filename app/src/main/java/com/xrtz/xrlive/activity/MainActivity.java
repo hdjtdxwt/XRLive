@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.ksyun.media.streamer.kit.StreamerConstants;
 import com.xrtz.xrlive.R;
+import com.xrtz.xrlive.application.LiveApplication;
 import com.xrtz.xrlive.fragment.HomeFragment;
 import com.xrtz.xrlive.fragment.MeFragment;
 
@@ -93,7 +94,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.image_tab_show:
                 //开启直播
-                String url = "rtmp://211.149.239.170:1935/live/";
+                LiveApplication application = (LiveApplication) getApplication();
+                String url = "rtmp://211.149.239.170:1935/live/"+application.getUser().getUserId();
                 int frameRate= 15;
                 int videoBitRate = 800;
                 int audioBitRate = 48;

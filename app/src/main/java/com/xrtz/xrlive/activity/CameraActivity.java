@@ -43,6 +43,7 @@ import com.ksyun.media.streamer.logstats.StatsLogReport;
 import com.ksyun.media.streamer.util.audio.KSYBgmPlayer;
 import com.xrtz.xrlive.BuildConfig;
 import com.xrtz.xrlive.R;
+import com.xrtz.xrlive.application.LiveApplication;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -71,7 +72,7 @@ public class CameraActivity extends Activity implements
     private boolean mPrintDebugInfo = false;
     private boolean mRecording = false;
     private boolean isFlashOpened = false;
-    private String mUrl;
+    private String mUrl="rtmp://211.149.239.170:1935/live/";  //默认的视频直播地址
     private String mDebugInfo = "";
     private String mBgmPath = "/sdcard/test.mp3";
     private String mLogoPath = "file:///sdcard/test.png";
@@ -80,7 +81,7 @@ public class CameraActivity extends Activity implements
     private static final String START_STRING = "开始直播";
     private static final String STOP_STRING = "停止直播";
 
-    public final static String URL = "rtmp://211.149.239.170:1935/live/";   //默认的视频直播地址
+    public final static String URL = "url";
     public final static String FRAME_RATE = "framerate";
     public final static String VIDEO_BITRATE = "video_bitrate";
     public final static String AUDIO_BITRATE = "audio_bitrate";
@@ -117,6 +118,9 @@ public class CameraActivity extends Activity implements
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.camera_activity);
+        LiveApplication application = (LiveApplication) getApplication();
+        Log.e("onCreate","id="+application.getUser().getUserId());
+        mUrl+=application.getUser().getUserId(); //最后拼接上用户的id
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -290,23 +294,6 @@ public class CameraActivity extends Activity implements
         mRecording = false;
     }
 
-   /* private void beginInfoUploadTimer() {
-        if (mPrintDebugInfo && mTimer == null) {
-            mTimer = new Timer();
-            mTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    updateDebugInfo();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mDebugInfoTextView.setText(mDebugInfo);
-                        }
-                    });
-                }
-            }, 100, 1000);
-        }
-    }*/
 
     //update debug info
     private void updateDebugInfo() {
@@ -549,36 +536,7 @@ public class CameraActivity extends Activity implements
     }
 
     private void showChooseFilter() {
-        /*
-        AlertDialog alertDialog;
-        alertDialog = new AlertDialog.Builder(this)
-                .setTitle("请选择美颜滤镜")
-                .setSingleChoiceItems(
-                        new String[]{"BEAUTY_SOFT", "SKIN_WHITEN", "BEAUTY_ILLUSION", "DENOISE",
-                                "BEAUTY_SMOOTH", "DEMOFILTER", "GROUP_FILTER"}, -1,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (which < 5) {
-                                    mStreamer.getImgTexFilterMgt().setFilter(
-                                            mStreamer.getGLRender(), which + 16);
-                                } else if (which == 5) {
-                                    mStreamer.getImgTexFilterMgt().setFilter(
-                                            new DemoFilter(mStreamer.getGLRender()));
-                                } else if (which == 6) {
-                                    List<ImgTexFilter> groupFilter = new LinkedList<>();
-                                    groupFilter.add(new DemoFilter2(mStreamer.getGLRender()));
-                                    groupFilter.add(new DemoFilter3(mStreamer.getGLRender()));
-                                    groupFilter.add(new DemoFilter4(mStreamer.getGLRender()));
-                                    mStreamer.getImgTexFilterMgt().setFilter(groupFilter);
-                                }
-                                dialog.dismiss();
-                            }
-                        })
-                .create();
-        alertDialog.setCancelable(false);
-        alertDialog.show();
-        */
+
     }
 
     boolean[] mChooseFilter = {false, false};
@@ -715,37 +673,7 @@ public class CameraActivity extends Activity implements
             }
         }
     }
-    /*
 
-    private class CheckBoxObserver implements CompoundButton.OnCheckedChangeListener {
-
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            switch (buttonView.getId()) {
-                case R.id.click_to_switch_beauty:
-                    onBeautyChecked(isChecked);
-                    break;
-                case R.id.click_to_select_audio_filter:
-                    onAudioFilterChecked(isChecked);
-                    break;
-                case R.id.bgm:
-                    onBgmChecked(isChecked);
-                    break;
-                case R.id.mute:
-                    onMuteChecked(isChecked);
-                    break;
-                case R.id.front_camera_mirror:
-                    onFrontMirrorChecked(isChecked);
-                    break;
-                case R.id.audio_only:
-                    onAudioOnlyChecked(isChecked);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-    */
     private void startCameraPreviewWithPermCheck() {
         int cameraPerm = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         int audioPerm = ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
