@@ -1,5 +1,6 @@
 package com.xrtz.xrlive.view;
 
+import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
 
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.view.View;
  * 重写RecyclerView的setAdapter()方法，在设置了适配器后，注册监听器，在监听回调方法里判断是否有数据，没数据显示一个默认的空的View
  * 不支持单独的布局文件作为EmptyView,需要将EmptyView和RecyclerView作为同一层的View
  */
+@SuppressLint("NewApi")
 public class EmptyRecyclerView extends RecyclerView {
 
     private View emptyView;
